@@ -1,0 +1,26 @@
+.Featured {
+    background: linear-gradient(180deg ,pink, rgb(254, 236, 239) 80%);
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: 90vh;
+}
+.Featured h1{
+    color: #171717;
+    font-size: 45px;
+    font-weight: 600;
+}
+.Featured hr{
+    width: 200px;
+    height: 3px;
+    border-radius: 10px;
+    background: #252525;
+}
+.Featured-item {
+    margin-top: 50px;
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+}
