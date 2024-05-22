@@ -1,0 +1,47 @@
+.edit-product-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+  }
+  
+  .edit-product-itemfield {
+    margin-bottom: 15px;
+  }
+  
+  .edit-product-itemfield input,
+  .edit-product-selector {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+  }
+  
+  .save-btn,
+  .close-btn {
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+  
+  .save-btn {
+    background: green;
+    color: white;
+  }
+  
+  .close-btn {
+    background: red;
+    color: white;
+  }
+  
