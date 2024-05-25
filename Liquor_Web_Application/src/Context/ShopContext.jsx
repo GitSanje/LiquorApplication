@@ -135,7 +135,28 @@ useEffect(() => {
       ]
     });
   };
-  const contextValue = {products, getTotalCartItems, cartItems, addToCart, removeFromCart, getTotalCartAmount };
+
+  const clearCart =  () => {
+    if (localStorage.getItem('auth-token')) {
+      try {
+         fetch('http://localhost:4000/clearcart', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'auth-token': localStorage.getItem('auth-token'),
+            'Content-Type': 'application/json'
+          }
+        });
+        setCartItems(getDefaultCart());
+        localStorage.setItem('cartItems', '');
+      } catch (error) {
+        console.error('Error clearing cart:', error);
+      }
+    } else {
+      setCartItems(getDefaultCart());
+    }
+  };
+  const contextValue = {products, getTotalCartItems, cartItems, addToCart, removeFromCart, getTotalCartAmount ,clearCart};
   return (
     <ShopContext.Provider value={contextValue}>
       {props.children}

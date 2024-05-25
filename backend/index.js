@@ -2,13 +2,13 @@ const port = 4000;
 
 const express = require("express")
 const app = express()
+const axios = require("axios");
 
 const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
 const multer = require("multer") // image storage engine
 const path = require("path") // access backend directory in express app
 const cors = require("cors")
-
 
 app.use(express.json());// response data parse through json
 app.use(cors())// react js project connect to express js on 4000 port
@@ -30,6 +30,8 @@ const storage = multer.diskStorage({
         return cb(null,`${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
     }
 })
+
+const  secretKey= "test_secret_key_a40c0e9764424956a3764de3c4ac0139";
 
 const upload = multer({ storage:storage })
 
@@ -118,9 +120,100 @@ const Product = mongoose.model("Product", {
       default: true,
     },
   });
+
+  const Checkout = mongoose.model("Checkout", {
+
+    phoneNumber: {
+      type: Number,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String
+    },
+    paymentMethod: {
+      type: String,
+      required: true,
+    },
+    totalAmount: {
+      type: Number,
+      
+    },
+    cartData: {
+      type: Object,
+    },
+    status: {
+      type: String,
+      default: "pending"
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+    
+  });
   app.get("/", (req, res) => {
     res.send("Root");
   });
+
+
+  app.post("/khalti-api", async (req, res) => {
+    const payload = req.body;
+    const khaltiResponse = await axios.post(
+      "https://a.khalti.com/api/v2/epayment/initiate/",
+      payload,
+      {
+        headers: {
+          Authorization: `Key ${secretKey}`,
+        },
+      }
+    );
+  
+    if (khaltiResponse) {
+      res.json({
+        success: true,
+        data: khaltiResponse?.data,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "something went wrong",
+      });
+    }
+  });
+
+app.post('/checkout', async (req, res) => {
+  try {
+    let success = false;
+    const checkout = new Checkout({
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      address: req.body.address,
+      city: req.body.city,
+      paymentMethod:req.body.paymentMethod,
+      totalAmount:req.body.totalAmount,
+      cartData:req.body.cartData,
+      
+    });
+
+    await checkout.save();
+
+    success = true; 
+    console.log("Checkout has been added" )
+    res.json({ success, message:"Checkout has been added" })
+  } 
+  catch (error) {
+
+    res.status(500).json({ success: false, errors: "Internal server error" });
+  }
+})
 
 //Create an endpoint at ip/login for login the user and giving auth-token
 app.post('/login', async (req, res) => {
@@ -132,7 +225,8 @@ app.post('/login', async (req, res) => {
         if (passCompare) {
             const data = {
                 user: {
-                    id: user.id
+                    id: user.id, 
+                    email: user.email,
                 }
             }
 			success = true;
@@ -298,6 +392,75 @@ app.post('/getcart', fetchuser, async (req, res) => {
   res.json(userData.cartData);
 
   })
+  // Create an endpoint to clear the cart
+app.post('/clearcart', fetchuser, async (req, res) => {
+  try {
+    console.log("Clear Cart");
+    let userData = await Users.findOne({ _id: req.user.id });
+    let cart = {};
+    for (let i = 0; i < 300; i++) {
+    cart[i] = 0;
+     }
+   
+     userData.cartData = cart;
+
+    // Save the updated user data
+    await Users.findOneAndUpdate({ _id: req.user.id }, { cartData: userData.cartData });
+
+    res.send("Cart cleared successfully");
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).send("Error clearing cart");
+  }
+});
+
+app.get('/getCheckOut', fetchuser, async (req, res) => {
+	console.log("getCheckOut ");
+     
+    let checkouts = await Checkout.find({email:req.user.email});
+    
+    if (checkouts.length === 0) {
+      return res.status(404).json({ success: false, message: 'No checkouts found for the email ID' });
+    }
+    
+    res.json({ success: true, checkouts: checkouts });
+  })
+
+  app.get('/getcheckouts', async (req, res) => {
+    console.log("getcheckouts ");
+       
+      let checkouts = await Checkout.find({});
+      
+      if (checkouts.length === 0) {
+        return res.status(404).json({ success: false, message: 'No checkouts found for the email ID' });
+      }
+      
+      res.json({ success: true, checkouts: checkouts });
+    })
+
+    app.post('/Orderstatus', async (req, res) => {
+      const { orderId, status } = req.body;
+    
+      try {
+        const checkout = await Checkout.findById(orderId);
+    
+        if (!checkout) {
+          return res.status(404).json({ success: false, message: 'Checkout not found' });
+        }
+    
+        checkout.status = status;
+        await checkout.save();
+    
+        res.json({ success: true, message: 'Order status updated', checkout });
+      } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+    });
+    
+  
+
+
 app.listen(port, (error) => {
     if (!error) console.log("Server Running on port " + port);
     else console.log("Error : ", error);

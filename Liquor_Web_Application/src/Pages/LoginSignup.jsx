@@ -129,7 +129,7 @@ const LoginSignup = () => {
     <div className="loginsignup">
       <div className="loginsignup-container">
         <h1>{state}</h1>
-        {alertMessage && <div className="alert">{alertMessage}</div>}
+        {alertMessage && <div className="alert_msg">{alertMessage}</div>}
         <div className="loginsignup-fields">
           {state === "Sign Up" && (
             <>

@@ -43,6 +43,7 @@
     color: blue;
     margin: auto;
   }
+
   @media(max-width:800px){
     .listproduct {
       box-sizing: border-box;

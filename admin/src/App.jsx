@@ -15,6 +15,7 @@ const App = () => {
     
 
       <Navbar />
+      
       <Routes>
         {isAuthenticated ? (
           <Route path='/*' element={<Admin />} />

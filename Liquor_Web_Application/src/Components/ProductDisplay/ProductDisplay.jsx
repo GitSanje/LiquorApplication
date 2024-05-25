@@ -33,13 +33,8 @@ const ProductDisplay = (props) => {
             <div className="productdisplay-right-description">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500
             </div>
-            <div className="productdisplay-right-size">
-                <h1>Select Size</h1>
-                <div className="productdisplay-right-sizes">
-                    <div>Quarter</div>
-                    <div>Half</div>
-                    <div>Full</div> 
-                </div>
+            <div className="productdisplay-right-size mt-3">
+                
             </div>
             {localStorage.getItem('auth-token') ? (
          <button onClick={()=>{addToCart(product.id)}}>ADD TO CART</button>

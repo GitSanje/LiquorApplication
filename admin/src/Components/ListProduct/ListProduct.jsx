@@ -42,7 +42,7 @@ const ListProduct = () => {
             });
 
             fetchInfo();
-          }
+          } 
         },
         {
           label: 'No',

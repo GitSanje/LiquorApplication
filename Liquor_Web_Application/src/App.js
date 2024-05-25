@@ -11,6 +11,8 @@ import Footer from './Components/Footer/Footer';
 
 import ShopCategory from './Pages/ShopCategory';
 import CheckoutForm from './Components/Checkout/Checkout';
+import Khalti from './Components/Khalti/Khalti';
+import OrderDetails_main from './Components/OrderDetails/OrderDetails_main';
 
 function App() {
 
@@ -34,6 +36,8 @@ function App() {
           <Route path='/Cart' element={<Cart/>}/>
           <Route path='/Login' element={<LoginSignup/>}/>
           <Route path='/Checkout' element={<CheckoutForm/>}/>
+          <Route path='/khalti' element={<Khalti/>}/>
+          <Route path='/orderdetails' element={<OrderDetails_main/>}/>
         </Routes>
         <Footer/>
   
